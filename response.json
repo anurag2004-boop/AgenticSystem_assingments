@@ -1,0 +1,8 @@
+{
+    "request_id": "12345",
+    "status": "follow-up",
+    "result": {
+        "text": "The follow-up API response was processed successfully.",
+        "confidence": 0.95
+    }
+}
