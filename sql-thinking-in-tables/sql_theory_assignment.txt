@@ -1,0 +1,164 @@
+# 1. Why databases are important in AI systems
+
+In real-world applications, AI systems interact with constantly changing data. Databases make it possible to:
+
+* **Store large volumes of data efficiently**
+* **Retrieve data quickly** (critical for real-time AI predictions)
+* **Maintain data consistency and accuracy**
+* **Support concurrent access** (many users or systems at once)
+
+### Examples 
+
+Typical AI systems may store:
+
+* **User data**: names, emails, preferences, login history
+* **Transaction data**: purchases, payments, timestamps
+* **Sensor data**: temperature readings, GPS coordinates, IoT signals
+* **Text data**: chat logs, reviews, documents
+* **Image/video metadata**: file paths, labels, timestamps
+* **Model outputs**: predictions, confidence scores
+
+### Why structured storage is necessary
+
+Structured storage ensures:
+
+* **Consistency**: Data follows a defined format (e.g., every user has an ID, email, etc.)
+* **Efficiency**: Queries (like “find all users who bought X”) are fast
+* **Data integrity**: Prevents duplicates or invalid entries
+* **Scalability**: Systems can grow without becoming chaotic
+
+Without structure, AI systems would struggle with messy, inconsistent, and unreliable data.
+
+---
+
+## 2. The relational database mental model
+
+Relational databases organize data into **tables**, which resemble spreadsheets.
+
+### Key components:
+
+* **Table**: Represents a single entity (e.g., Users, Orders)
+* **Row**: A single record (one instance of the entity)
+* **Column**: An attribute or property of the entity
+
+### Example:
+
+**Users table**
+
+| user_id | name | email                                   |
+| ------- | ---- | --------------------------------------- |
+| 1       | Asha | [asha@email.com](mailto:asha@email.com) |
+| 2       | Ravi | [ravi@email.com](mailto:ravi@email.com) |
+
+* Table = Users
+* Rows = individual users
+* Columns = attributes (name, email)
+
+### Why each table should represent a single entity
+
+Each table should focus on one concept (e.g., Users, Orders) to:
+
+* Avoid duplication of data
+* Improve clarity and maintainability
+* Enable efficient updates (change in one place, not many)
+* Support relationships between entities
+
+This principle is part of **database normalization**.
+
+---
+
+## 3. Primary key concept
+
+A **primary key** is a column (or set of columns) that uniquely identifies each row in a table.
+
+### Example:
+
+user_id in the Users table
+
+### Requirements:
+
+* **Unique**: No two rows can have the same primary key
+* **Non-null**: Every row must have a value
+
+### Why primary keys are important:
+
+* Ensure each record can be uniquely identified
+* Enable fast lookups
+* Allow other tables to reference specific records
+* Prevent duplicate entries
+
+Without a primary key, it would be difficult to distinguish between records reliably.
+
+---
+
+## 4. Database schema
+
+A **database schema** is the blueprint or structure of a database.
+
+### It defines:
+
+* Tables and their names
+* Columns and their data types (e.g., integer, text, date)
+* Primary keys and foreign keys
+* Constraints (e.g., NOT NULL, UNIQUE)
+* Relationships between tables
+
+### Why schemas are important:
+
+* Ensure **consistency** across the database
+* Make systems easier to understand and maintain
+* Prevent invalid data from being inserted
+* Provide a shared structure for developers and AI systems
+
+In AI pipelines, schemas ensure that incoming data matches expected formats, which is crucial for model performance.
+
+---
+
+## 5. Relationships between tables
+
+Relational databases allow tables to be connected using **keys**, enabling complex data modeling.
+
+### Foreign key concept
+
+A **foreign key** is a column in one table that refers to the primary key in another table.
+
+---
+
+### Example: Users and Orders
+
+**Users table**
+
+| user_id (PK) | name |
+| ------------ | ---- |
+| 1            | Asha |
+| 2            | Ravi |
+
+**Orders table**
+
+| order_id (PK) | user_id (FK) | product |
+| ------------- | ------------ | ------- |
+| 101           | 1            | Phone   |
+| 102           | 2            | Laptop  |
+| 103           | 1            | Shoes   |
+
+* user_id in Orders is a **foreign key**
+* It links each order to a specific user
+
+### Why relationships matter:
+
+* Avoid duplicating user data in every order
+* Maintain consistency (orders must belong to valid users)
+* Enable powerful queries (e.g., “find all orders by Asha”)
+* Reflect real-world connections between entities
+
+---
+
+## Summary
+
+* Databases are essential for storing and managing the data AI systems rely on
+* Relational databases organize data into tables, rows, and columns
+* Primary keys uniquely identify records
+* Schemas define the structure and rules of the database
+* Foreign keys connect tables and model real-world relationships
+
+Together, these concepts allow AI systems to work with clean, structured, and reliable data—making them more accurate and scalable.
