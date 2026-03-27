@@ -22,7 +22,7 @@
 import pandas as pd
 import plotly.express as px 
 # Load the dataset
-df = pd.read_csv("iris.csv")    
+df = pd.read_csv("titanic.csv")    
 # Inspect the dataset structure
 print(df.head())
 print(df.info())
