@@ -1,0 +1,4 @@
+{"trace_id": "AMZN-12345", "step_name": "Order Placed", "details": {"vendor": "SellerA", "items_count": 2}, "timestamp": "2026-09-06T06:54:24.316087Z"}
+{"trace_id": "AMZN-12345", "step_name": "Dispatched", "details": {"facility": "Mumbai_Hub", "carrier": "BlueDart"}, "timestamp": "2026-09-06T06:54:24.317316Z"}
+{"trace_id": "MYNT-67890", "step_name": "Order Confirmed", "details": {"payment_mode": "UPI"}, "timestamp": "2026-09-06T06:54:24.318362Z"}
+{"trace_id": "MYNT-67890", "step_name": "In Transit", "details": {"current_location": "Bengaluru_DC"}, "timestamp": "2026-09-06T06:54:24.318935Z"}
