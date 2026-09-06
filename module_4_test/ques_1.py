@@ -1,92 +1,48 @@
-from datetime import datetime
-import json
-import os
+PRICING = {
+    "Kimi K3": {"input_rate": 3, "output_rate": 15},
+    "GPT": {"input_rate": 5, "output_rate": 30}
+}
 
-LOG_FILE = "trace_log.jsonl"
+def route_model(query_type):
+    if query_type == "simple":
+        return "Kimi K3"
+    elif query_type == "complex":
+        return "GPT"
+    else:
+        raise ValueError(f"Invalid query type: {query_type}")
 
-# Task 1: Log an event to the JSON Lines file
-def log_event(trace_id, step_name, details):
-    event = {
-        "trace_id": trace_id,
-        "step_name": step_name,
-        "details": details,
-        "timestamp": datetime.utcnow().isoformat() + "Z"
-    }
+def calculate_cost(query_type, input_tokens, output_tokens):
+    model = route_model(query_type)
+    rates = PRICING[model]
     
-    # Append the event as a single JSON line
-    with open(LOG_FILE, "a", encoding="utf-8") as f:
-        f.write(json.dumps(event) + "\n")
-
-# Task 2: Retrieve all events for a given trace_id
-def get_trace(trace_id):
-    if not os.path.exists(LOG_FILE):
-        return []
-        
-    events = []
-    with open(LOG_FILE, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                event = json.loads(line)
-                if event.get("trace_id") == trace_id:
-                    events.append(event)
-            except json.JSONDecodeError:
-                continue
-                
-    return events
-
-# Task 3: List all unique trace IDs
-def list_all_trace_ids():
-    if not os.path.exists(LOG_FILE):
-        return []
-        
-    unique_ids = []
-    seen = set()
+    input_cost = (input_tokens / 1_000_000) * rates["input_rate"]
+    output_cost = (output_tokens / 1_000_000) * rates["output_rate"]
+    total_cost = input_cost + output_cost
     
-    with open(LOG_FILE, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                event = json.loads(line)
-                t_id = event.get("trace_id")
-                if t_id and t_id not in seen:
-                    seen.add(t_id)
-                    unique_ids.append(t_id)
-            except json.JSONDecodeError:
-                continue
-                
-    return unique_ids
+    return model, round(total_cost, 4)
 
-# Task 4: Demonstrate the workflow
+def process_requests(requests):
+    results = []
+    total_cost = 0.0
+    
+    for req in requests:
+        model, cost = calculate_cost(req["query_type"], req["input_tokens"], req["output_tokens"])
+        total_cost += cost
+        
+        # Formatting to match the expected output dictionary string
+        results.append(f"{{'request_id': {req['request_id']}, 'model': '{model}', 'cost_usd': {cost}}}")
+        
+    results.append(f"TOTAL: {round(total_cost, 4)}")
+    return " ".join(results)
+
 if __name__ == "__main__":
-    # Clean up any existing file from previous runs to ensure clean demonstration
-    if os.path.exists(LOG_FILE):
-        os.remove(LOG_FILE)
-        
-    # Simulating two distinct parcels
-    amazon_id = "AMZN-12345"
-    myntra_id = "MYNT-67890"
-    
-    # Logging events for Amazon parcel (2 events)
-    print("Logging events...")
-    log_event(amazon_id, "Order Placed", {"vendor": "SellerA", "items_count": 2})
-    log_event(amazon_id, "Dispatched", {"facility": "Mumbai_Hub", "carrier": "BlueDart"})
-    
-    # Logging events for Myntra parcel (2 events)
-    log_event(myntra_id, "Order Confirmed", {"payment_mode": "UPI"})
-    log_event(myntra_id, "In Transit", {"current_location": "Bengaluru_DC"})
-    
-    # Fetch and print trace for Amazon parcel
-    print(f"\n--- Fetching trace for {amazon_id} ---")
-    amazon_trace = get_trace(amazon_id)
-    for event in amazon_trace:
-        print(event)
-        
-    # List all distinct trace IDs logged
-    print("\n--- Listing all distinct trace IDs ---")
-    all_traces = list_all_trace_ids()
-    print(all_traces)
+    sample_requests = [
+        {"request_id": 1, "query_type": "simple", "input_tokens": 500, "output_tokens": 150},
+        {"request_id": 2, "query_type": "complex", "input_tokens": 2000, "output_tokens": 800},
+        {"request_id": 3, "query_type": "simple", "input_tokens": 300, "output_tokens": 100},
+        {"request_id": 4, "query_type": "complex", "input_tokens": 5000, "output_tokens": 1200},
+        {"request_id": 5, "query_type": "simple", "input_tokens": 800, "output_tokens": 200},
+        {"request_id": 6, "query_type": "complex", "input_tokens": 1200, "output_tokens": 400}
+    ]
+    output = process_requests(sample_requests)
+    print(output)
